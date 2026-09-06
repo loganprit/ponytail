@@ -12,10 +12,11 @@ can't quietly become permanent.
 Search from the repository root with `rg`, skipping directory basenames for
 dependencies, VCS metadata, and generated output:
 
-`rg --hidden -n '(#|//) ?ponytail:' -g '!node_modules' -g '!.git' -g '!build' -g '!dist' .`
+`rg --hidden -n '(<!--|//|--|/[*]|#|[*])[[:space:]]*ponytail:' -g '!node_modules' -g '!.git' -g '!build' -g '!dist' .`
 
 Each hit is one ledger row. The comment prefix keeps prose that merely mentions
-the convention out of the ledger.
+the convention out of the ledger. Add another prefix only when the repository's
+stack uses one this pattern does not cover.
 
 ## Output
 

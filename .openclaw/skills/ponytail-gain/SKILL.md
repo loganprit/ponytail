@@ -11,7 +11,9 @@ Display this scoreboard when invoked. One-shot: do NOT change mode, write flag
 files, or persist anything.
 
 The figures are the published agentic benchmark means: 12 feature tasks,
-Haiku 4.5, four runs per task. They are measured, not computed from the current
+Haiku 4.5, four attempted runs per task and arm. LOC includes every attempt;
+cost and time exclude four timed-out cells, leaving at least two observations
+in each task and arm cell. They are measured, not computed from the current
 repo. Source: `benchmarks/results/2026-06-18-agentic.md` and the README.
 
 ## Scoreboard
@@ -20,7 +22,7 @@ Render plain ASCII bars. The bar length shows the measured range; the label
 carries the exact figure:
 
 ```
-  ponytail gain                agentic benchmark · 12 tasks · Haiku 4.5 · n=4
+  ponytail gain       agentic benchmark · 12 tasks · Haiku 4.5 · 4 attempts/cell*
 
   Lines of code   no-skill  ████████████████████  100%
                   ponytail  █████████···········     46%   ▼ 54%
@@ -28,6 +30,8 @@ carries the exact figure:
                   ponytail  ████████████████····     80%   ▼ 20%
   Time            no-skill  ████████████████████  100%
                   ponytail  ██████████████▌·····     73%   ▼ 27%
+
+  * LOC uses every attempt; cost/time exclude four timed-out cells (2–4/cell).
 
   This repo:  /ponytail-debt  (shortcuts you deferred)
               /ponytail-audit (what's still cuttable)

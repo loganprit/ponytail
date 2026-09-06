@@ -40,7 +40,7 @@ test('every registered command ships an OpenCode .opencode/command/*.md', () => 
   }
 });
 
-test('ponytail-debt rg scan reaches nested source and skips generated directories', (t) => {
+test('ponytail-debt rg scan finds common comment syntaxes and skips generated directories', (t) => {
   const probe = spawnSync('rg', ['--version'], { encoding: 'utf8' });
   if (probe.error?.code === 'ENOENT') {
     t.skip('rg is unavailable');
@@ -57,6 +57,12 @@ test('ponytail-debt rg scan reaches nested source and skips generated directorie
   try {
     write('src/nested.js', '// ponytail: source marker');
     write('.hidden/source.js', '// ponytail: hidden source marker');
+    write(
+      'examples/modal-dialog.md',
+      '<!-- ponytail: browser has one, with focus trapping and backdrop built in -->',
+    );
+    write('styles/theme.css', '/* ponytail: native cascade, add a layer if ordering breaks */');
+    write('db/schema.sql', '-- ponytail: one table, split when access patterns diverge');
     for (const directory of ['node_modules', '.git', 'build', 'dist']) {
       write(`${directory}/nested.js`, `// ponytail: ignored ${directory} marker`);
     }
@@ -66,7 +72,7 @@ test('ponytail-debt rg scan reaches nested source and skips generated directorie
       [
         '--hidden',
         '-n',
-        '(#|//) ?ponytail:',
+        '(<!--|//|--|/[*]|#|[*])[[:space:]]*ponytail:',
         '-g',
         '!node_modules',
         '-g',
@@ -83,6 +89,9 @@ test('ponytail-debt rg scan reaches nested source and skips generated directorie
     assert.equal(result.status, 0, result.stderr);
     assert.match(result.stdout, /src\/nested\.js/);
     assert.match(result.stdout, /\.hidden\/source\.js/);
+    assert.match(result.stdout, /examples\/modal-dialog\.md/);
+    assert.match(result.stdout, /styles\/theme\.css/);
+    assert.match(result.stdout, /db\/schema\.sql/);
     for (const directory of ['node_modules', '.git', 'build', 'dist']) {
       assert.doesNotMatch(result.stdout, new RegExp(`${directory}/`));
     }
