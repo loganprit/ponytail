@@ -7,6 +7,8 @@
 
 const test = require('node:test');
 const assert = require('node:assert/strict');
+const os = require('node:os');
+const { spawnSync } = require('node:child_process');
 const fs = require('fs');
 const path = require('path');
 
@@ -35,5 +37,56 @@ test('every registered command ships an OpenCode .opencode/command/*.md', () => 
       fs.existsSync(path.join(root, '.opencode', 'command', `${name}.md`)),
       `missing .opencode/command/${name}.md`,
     );
+  }
+});
+
+test('ponytail-debt rg scan reaches nested source and skips generated directories', (t) => {
+  const probe = spawnSync('rg', ['--version'], { encoding: 'utf8' });
+  if (probe.error?.code === 'ENOENT') {
+    t.skip('rg is unavailable');
+    return;
+  }
+
+  const fixture = fs.mkdtempSync(path.join(os.tmpdir(), 'ponytail-debt-'));
+  const write = (relative, contents) => {
+    const file = path.join(fixture, relative);
+    fs.mkdirSync(path.dirname(file), { recursive: true });
+    fs.writeFileSync(file, contents);
+  };
+
+  try {
+    write('src/nested.js', '// ponytail: source marker');
+    write('.hidden/source.js', '// ponytail: hidden source marker');
+    for (const directory of ['node_modules', '.git', 'build', 'dist']) {
+      write(`${directory}/nested.js`, `// ponytail: ignored ${directory} marker`);
+    }
+
+    const result = spawnSync(
+      'rg',
+      [
+        '--hidden',
+        '-n',
+        '(#|//) ?ponytail:',
+        '-g',
+        '!node_modules',
+        '-g',
+        '!.git',
+        '-g',
+        '!build',
+        '-g',
+        '!dist',
+        '.',
+      ],
+      { cwd: fixture, encoding: 'utf8' },
+    );
+
+    assert.equal(result.status, 0, result.stderr);
+    assert.match(result.stdout, /src\/nested\.js/);
+    assert.match(result.stdout, /\.hidden\/source\.js/);
+    for (const directory of ['node_modules', '.git', 'build', 'dist']) {
+      assert.doesNotMatch(result.stdout, new RegExp(`${directory}/`));
+    }
+  } finally {
+    fs.rmSync(fixture, { force: true, recursive: true });
   }
 });

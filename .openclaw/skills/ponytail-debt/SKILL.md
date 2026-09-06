@@ -11,10 +11,10 @@ can't quietly become permanent.
 
 ## Scan
 
-Grep the repo for comment markers, skipping `node_modules`, `.git`, and build
-output:
+Search from the repository root with `rg`, skipping directory basenames for
+dependencies, VCS metadata, and generated output:
 
-`rg --hidden -n '(#|//) ?ponytail:' -g '!node_modules/**' -g '!.git/**' -g '!build/**' -g '!dist/**'`
+`rg --hidden -n '(#|//) ?ponytail:' -g '!node_modules' -g '!.git' -g '!build' -g '!dist' .`
 
 Each hit is one ledger row. The comment prefix keeps prose that merely mentions
 the convention out of the ledger.
