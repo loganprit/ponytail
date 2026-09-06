@@ -1,6 +1,6 @@
 ---
 name: ponytail-debt
-description: "Harvest every ponytail: shortcut comment into one debt ledger, so deferrals get tracked instead of forgotten. One-shot report."
+description: "Collect ponytail: shortcut comments into a debt ledger when the user asks what Ponytail deferred."
 homepage: https://github.com/DietrichGebert/ponytail
 license: MIT
 ---
@@ -14,7 +14,7 @@ can't quietly become permanent.
 Grep the repo for comment markers, skipping `node_modules`, `.git`, and build
 output:
 
-`grep -rnE '(#|//) ?ponytail:' .`  (add other comment prefixes if your stack uses them)
+`rg --hidden -n '(#|//) ?ponytail:' -g '!node_modules/**' -g '!.git/**' -g '!build/**' -g '!dist/**'`
 
 Each hit is one ledger row. The comment prefix keeps prose that merely mentions
 the convention out of the ledger.
@@ -36,6 +36,5 @@ End with `<N> markers, <M> with no trigger.` Nothing found: `No ponytail: debt. 
 
 ## Boundaries
 
-Reads and reports only, changes nothing. To persist it, ask and it writes the
-ledger to a file (e.g. `PONYTAIL-DEBT.md`). One-shot. "stop ponytail-debt" or
-"normal mode" to revert.
+Reads and reports only, changes nothing. Write the ledger to a file such as
+`PONYTAIL-DEBT.md` only when the user requests persistence. One-shot.

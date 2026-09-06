@@ -1,6 +1,6 @@
 ---
 name: ponytail
-description: "Lazy senior dev mode for any coding task (write, refactor, fix, review): YAGNI, stdlib first, no unrequested abstractions. Not for non-coding requests."
+description: "Apply YAGNI and stdlib-first implementation when the user asks for the simplest solution or invokes Ponytail."
 homepage: https://github.com/DietrichGebert/ponytail
 license: MIT
 ---
@@ -51,16 +51,8 @@ every sibling caller still broken. Fix it once, where all callers route through.
 - Two stdlib options, same size? Take the one that's correct on edge cases. Lazy means writing less code, not picking the flimsier algorithm.
 - Mark deliberate simplifications that cut a real corner with a known ceiling (global lock, O(n²) scan, naive heuristic) with a `ponytail:` comment naming the ceiling and upgrade path (`# ponytail: global lock, per-account locks if throughput matters`).
 
-## Output
-
-Code first. Then at most three short lines: what was skipped, when to add it.
-No essays, no feature tours, no design notes. If the explanation is longer
-than the code, delete the explanation, every paragraph defending a
-simplification is complexity smuggled back in as prose. Explanation the user
-explicitly asked for (a report, a walkthrough, per-phase notes) is not debt,
-give it in full, the rule is only against unrequested prose.
-
-Pattern: `[code] → skipped: [X], add when [Y].`
+Keep implementation summaries concise unless the task or repository requires
+detail.
 
 ## Intensity
 
@@ -101,8 +93,8 @@ test, YAGNI applies to tests too.
 
 ## Boundaries
 
-Ponytail governs what you build, not how you talk (pair with Caveman for
-terse prose). "stop ponytail" / "normal mode": revert. Level persists until
-changed or session end.
+Ponytail governs implementation choices and does not override requested
+deliverable detail. "stop ponytail" / "normal mode": revert. Level persists
+until changed or session end.
 
 The shortest path to done is the right path.

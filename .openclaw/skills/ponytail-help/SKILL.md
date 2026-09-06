@@ -1,6 +1,6 @@
 ---
 name: ponytail-help
-description: "Quick reference for ponytail's modes, skills, and commands. One-shot display."
+description: "Show a quick reference for Ponytail modes and commands when the user asks how to use Ponytail."
 homepage: https://github.com/DietrichGebert/ponytail
 license: MIT
 ---
@@ -61,9 +61,7 @@ Resolution: env var > config file > `full`.
 
 ## Update
 
-Enable auto-update once: open `/plugin`, go to Marketplaces, pick ponytail, Enable auto-update. Claude Code then pulls new versions at startup (run `/reload-plugins` when it prompts). Manual refresh: `/plugin marketplace update ponytail` then `/reload-plugins`.
-
-If `/plugin` is not recognized, your Claude Code is out of date. Update it (`npm install -g @anthropic-ai/claude-code@latest`, or `brew upgrade claude-code`) and restart. Other hosts use their own update flow.
+Use the host's plugin update flow. See the README for host-specific commands.
 
 ## More
 

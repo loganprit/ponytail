@@ -1,12 +1,11 @@
 ---
 name: ponytail-audit
-description: "Audit the whole repo for over-engineering. A ranked list of what to delete, simplify, or replace with stdlib or native features."
+description: "Audit a repository for over-engineering when the user asks for a repo-wide deletion or simplification report."
 homepage: https://github.com/DietrichGebert/ponytail
 license: MIT
 ---
 
-ponytail-review, repo-wide. Scan the whole tree instead of a diff. Rank
-findings biggest cut first.
+Scan the whole tree instead of a diff. Rank findings biggest cut first.
 
 ## Tags
 
@@ -27,11 +26,11 @@ thing, dead flags and config, hand-rolled stdlib.
 ## Output
 
 One line per finding, ranked: `<tag> <what to cut>. <replacement>. [path]`.
-End with `net: -<N> lines, -<M> deps possible.` Nothing to cut: `Lean already. Ship.`
+Include line and dependency totals only when concrete edits make them known.
+Nothing to cut: `Lean already. Ship.`
 
 ## Boundaries
 
 Scope: over-engineering and complexity only. Correctness bugs, security holes,
 and performance are explicitly out of scope. Route them to a normal review
 pass. Lists findings, applies nothing. One-shot.
-"stop ponytail-audit" or "normal mode" to revert.
