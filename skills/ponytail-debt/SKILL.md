@@ -1,11 +1,6 @@
 ---
 name: ponytail-debt
-description: >
-  Harvest every `ponytail:` comment in the codebase into a debt ledger, so the
-  deliberate shortcuts and deferrals ponytail leaves behind get tracked instead
-  of rotting into "later means never". Use when the user says "ponytail debt",
-  "/ponytail-debt", "what did ponytail defer", "list the shortcuts", "ponytail
-  ledger", or "what did we mark to do later". One-shot report, changes nothing.
+description: Collect `ponytail:` shortcut comments into a debt ledger when the user asks what Ponytail deferred.
 ---
 
 Every deliberate ponytail shortcut is marked with a `ponytail:` comment naming
@@ -14,13 +9,14 @@ can't quietly become permanent.
 
 ## Scan
 
-Grep the repo for comment markers, skipping `node_modules`, `.git`, and build
-output:
+Search from the repository root with `rg`, skipping directory basenames for
+dependencies, VCS metadata, and generated output:
 
-`grep -rnE '(#|//) ?ponytail:' .`  (add other comment prefixes if your stack uses them)
+`rg --hidden -n '(<!--|//|--|/[*]|#|[*])[[:space:]]*ponytail:' -g '!node_modules' -g '!.git' -g '!build' -g '!dist' .`
 
 Each hit is one ledger row. The comment prefix keeps prose that merely mentions
-the convention out of the ledger.
+the convention out of the ledger. Add another prefix only when the repository's
+stack uses one this pattern does not cover.
 
 ## Output
 
@@ -39,6 +35,5 @@ End with `<N> markers, <M> with no trigger.` Nothing found: `No ponytail: debt. 
 
 ## Boundaries
 
-Reads and reports only, changes nothing. To persist it, ask and it writes the
-ledger to a file (e.g. `PONYTAIL-DEBT.md`). One-shot. "stop ponytail-debt" or
-"normal mode" to revert.
+Reads and reports only, changes nothing. Write the ledger to a file such as
+`PONYTAIL-DEBT.md` only when the user requests persistence. One-shot.

@@ -7,6 +7,8 @@
 
 const test = require('node:test');
 const assert = require('node:assert/strict');
+const os = require('node:os');
+const { spawnSync } = require('node:child_process');
 const fs = require('fs');
 const path = require('path');
 
@@ -35,5 +37,65 @@ test('every registered command ships an OpenCode .opencode/command/*.md', () => 
       fs.existsSync(path.join(root, '.opencode', 'command', `${name}.md`)),
       `missing .opencode/command/${name}.md`,
     );
+  }
+});
+
+test('ponytail-debt rg scan finds common comment syntaxes and skips generated directories', (t) => {
+  const probe = spawnSync('rg', ['--version'], { encoding: 'utf8' });
+  if (probe.error?.code === 'ENOENT') {
+    t.skip('rg is unavailable');
+    return;
+  }
+
+  const fixture = fs.mkdtempSync(path.join(os.tmpdir(), 'ponytail-debt-'));
+  const write = (relative, contents) => {
+    const file = path.join(fixture, relative);
+    fs.mkdirSync(path.dirname(file), { recursive: true });
+    fs.writeFileSync(file, contents);
+  };
+
+  try {
+    write('src/nested.js', '// ponytail: source marker');
+    write('.hidden/source.js', '// ponytail: hidden source marker');
+    write(
+      'examples/modal-dialog.md',
+      '<!-- ponytail: browser has one, with focus trapping and backdrop built in -->',
+    );
+    write('styles/theme.css', '/* ponytail: native cascade, add a layer if ordering breaks */');
+    write('db/schema.sql', '-- ponytail: one table, split when access patterns diverge');
+    for (const directory of ['node_modules', '.git', 'build', 'dist']) {
+      write(`${directory}/nested.js`, `// ponytail: ignored ${directory} marker`);
+    }
+
+    const result = spawnSync(
+      'rg',
+      [
+        '--hidden',
+        '-n',
+        '(<!--|//|--|/[*]|#|[*])[[:space:]]*ponytail:',
+        '-g',
+        '!node_modules',
+        '-g',
+        '!.git',
+        '-g',
+        '!build',
+        '-g',
+        '!dist',
+        '.',
+      ],
+      { cwd: fixture, encoding: 'utf8' },
+    );
+
+    assert.equal(result.status, 0, result.stderr);
+    assert.match(result.stdout, /src\/nested\.js/);
+    assert.match(result.stdout, /\.hidden\/source\.js/);
+    assert.match(result.stdout, /examples\/modal-dialog\.md/);
+    assert.match(result.stdout, /styles\/theme\.css/);
+    assert.match(result.stdout, /db\/schema\.sql/);
+    for (const directory of ['node_modules', '.git', 'build', 'dist']) {
+      assert.doesNotMatch(result.stdout, new RegExp(`${directory}/`));
+    }
+  } finally {
+    fs.rmSync(fixture, { force: true, recursive: true });
   }
 });

@@ -1,6 +1,6 @@
 ---
 name: ponytail-gain
-description: "Show ponytail measured impact as a scoreboard: less code, less cost, more speed, from the benchmark medians. One-shot display."
+description: "Show Ponytail's benchmark results as a compact scoreboard when the user asks about its measured impact."
 homepage: https://github.com/DietrichGebert/ponytail
 license: MIT
 ---
@@ -10,10 +10,11 @@ license: MIT
 Display this scoreboard when invoked. One-shot: do NOT change mode, write flag
 files, or persist anything.
 
-The figures are the published benchmark medians (5 everyday tasks: email
-validator, debounce, CSV sum, countdown timer, rate limiter; three models:
-Haiku, Sonnet, Opus). They are measured, not computed from the current repo.
-Source: `benchmarks/` and the README.
+The figures are the published agentic benchmark means: 12 feature tasks,
+Haiku 4.5, four attempted runs per task and arm. LOC includes every attempt;
+cost and time exclude four timed-out cells, leaving at least two observations
+in each task and arm cell. They are measured, not computed from the current
+repo. Source: `benchmarks/results/2026-06-18-agentic.md` and the README.
 
 ## Scoreboard
 
@@ -21,13 +22,16 @@ Render plain ASCII bars. The bar length shows the measured range; the label
 carries the exact figure:
 
 ```
-  ponytail gain                     benchmark median · 5 tasks · 3 models
+  ponytail gain       agentic benchmark · 12 tasks · Haiku 4.5 · 4 attempts/cell*
 
   Lines of code   no-skill  ████████████████████  100%
-                  ponytail  ██▌·················    6–20%   ▼ 80–94%
+                  ponytail  █████████···········     46%   ▼ 54%
   Cost            no-skill  ████████████████████  100%
-                  ponytail  █████▌··············   23–53%  ▼ 47–77%
-  Speed           ponytail  ▸ 3–6× faster
+                  ponytail  ████████████████····     80%   ▼ 20%
+  Time            no-skill  ████████████████████  100%
+                  ponytail  ██████████████▌·····     73%   ▼ 27%
+
+  * LOC uses every attempt; cost/time exclude four timed-out cells (2–4/cell).
 
   This repo:  /ponytail-debt  (shortcuts you deferred)
               /ponytail-audit (what's still cuttable)
@@ -35,13 +39,11 @@ carries the exact figure:
 
 ## Honesty boundary
 
-These are benchmark medians, not this repo. NEVER print a per-repo savings
+These are benchmark means, not this repo. NEVER print a per-repo savings
 number ("you saved X lines/tokens here"): the unbuilt version was never
-written, so there is no real baseline to subtract from in a live repo. The
-only real per-repo figures come from `/ponytail-debt` (a counted ledger), and
-this card points there instead of inventing one.
+written, so there is no real baseline to subtract from in a live repo.
+`/ponytail-debt` counts deferred shortcut markers; it does not estimate savings.
 
 ## Boundaries
 
 One-shot display. Edits nothing, changes no mode.
-"stop ponytail" or "normal mode": revert.
